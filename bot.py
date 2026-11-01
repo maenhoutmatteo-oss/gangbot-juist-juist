@@ -261,9 +261,12 @@ async def stand(ctx):
 
 @bot.command()
 async def afsluiten(ctx):
-    if ctx.author.id != 935496998935756861:
-        await ctx.send("❌ Alleen de baas mag afsluiten.")
-        return
+    toegestane_rollen = ["boss", "underboss"]
+gebruikers_rollen = [rol.name.lower() for rol in ctx.author.roles]
+
+if not any(rol in gebruikers_rollen for rol in toegestane_rollen):
+    await ctx.send("❌ Alleen boss en underboss mogen afsluiten.")
+    return
 
     ronde_id = await get_or_create_actieve_ronde(ctx.channel.id)
 
