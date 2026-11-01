@@ -308,4 +308,29 @@ async def persoonlijk(ctx, bedrag: float):
         await db.commit()
 
     await ctx.send(f"✅ Persoonlijk toegevoegd voor {ctx.author.mention}: {eur(round(bedrag, 2))} (geen gangpot)")
+
+
+@bot.command()
+async def reset(ctx):
+    toegestane_rollen = ["boss", "underboss"]
+    gebruikers_rollen = [rol.name.lower() for rol in ctx.author.roles]
+
+    if not any(rol in gebruikers_rollen for rol in toegestane_rollen):
+        await ctx.send("❌ Alleen boss en underboss mogen resetten.")
+        return
+
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute("DELETE FROM buit_log")
+        await db.execute("DELETE FROM persoonlijk_log")
+        await db.execute("DELETE FROM rondes")
+        await db.execute("UPDATE gangpot SET bedrag = 0")
+        await db.execute("DELETE FROM sqlite_sequence WHERE name IN ('rondes', 'buit_log', 'persoonlijk_log')")
+
+        await db.execute(
+            "INSERT INTO rondes (kanaal_id, is_actief) VALUES (?, 1)",
+            (ctx.channel.id,)
+        )
+        await db.commit()
+
+    await ctx.send("✅ **Boekhouding volledig gereset!** Gangpot: €0 | Nieuwe ronde: #1")
 bot.run(TOKEN)
