@@ -323,7 +323,7 @@ async def reset(ctx):
         await db.execute("DELETE FROM buit_log")
         await db.execute("DELETE FROM persoonlijk_log")
         await db.execute("DELETE FROM rondes")
-        await db.execute("UPDATE gangpot SET bedrag = 0")
+        await db.execute("UPDATE gangpot SET totaal = 0 WHERE id = 1")
         await db.execute("DELETE FROM sqlite_sequence WHERE name IN ('rondes', 'buit_log', 'persoonlijk_log')")
 
         await db.execute(
