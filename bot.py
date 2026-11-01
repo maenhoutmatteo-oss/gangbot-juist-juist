@@ -262,12 +262,13 @@ async def stand(ctx):
 @bot.command()
 async def afsluiten(ctx):
     toegestane_rollen = ["boss", "underboss"]
-gebruikers_rollen = [rol.name.lower() for rol in ctx.author.roles]
+    gebruikers_rollen = [rol.name.lower() for rol in ctx.author.roles]
 
-if not any(rol in gebruikers_rollen for rol in toegestane_rollen):
-    await ctx.send("❌ Alleen boss en underboss mogen afsluiten.")
-    return
+    if not any(rol in gebruikers_rollen for rol in toegestane_rollen):
+        await ctx.send("❌ Alleen boss en underboss mogen afsluiten.")
+        return
 
+    
     ronde_id = await get_or_create_actieve_ronde(ctx.channel.id)
 
     async with aiosqlite.connect(DB_PATH) as db:
